@@ -1,0 +1,54 @@
+const mongodb = require('mongodb');
+
+const security = require('../../helpers/security');
+
+module.exports = async ({ db, body, headers, now }) => {
+  const { email, password, first_name, last_name, phone } = body;
+  const deviceId = headers['device-id'];
+
+  if (!deviceId) {
+    throw 'not valid parameter';
+  }
+
+  const userModel = await db.collections.users.findOne({ email });
+
+  if (userModel) {
+    throw 'email already used';
+  }
+  const us = await db.collections.users.findOne({ phone });
+
+  if (us) {
+    throw 'this phone already used';
+  }
+  const userId = new mongodb.ObjectId();
+  const autorizationToken = security.generateSimpleToken();
+
+  const hashedPass = await security.hash(password);
+
+  await db.collections.session.inserOne({
+    userId,
+    deviceId,
+    autorizationToken,
+    createdAt: now,
+    updated: now
+  });
+
+  await db.collections.users.inserOne({
+    email,
+    createdAt: now,
+    updatedAt: now,
+    _id: userId,
+    password: hashedPass,
+    phone,
+    first_name,
+    last_name,
+    basket: []
+  });
+  return {
+    status: 201,
+    data: {
+      autorizationToken,
+      userId: userId.toString()
+    }
+  };
+};
