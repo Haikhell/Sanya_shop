@@ -2,6 +2,7 @@ require('dotenv').config({ path: `${__dirname}/.env` });
 
 const ENV = process.env;
 const NODE_ENV = ENV.NODE_ENV;
+
 const REQUIRED_CONFIG = [ 'NODE_ENV', 'MONGO_DB_URL', 'MONGO_DB_NAME', 'CODER_SECRET_KEY' ];
 
 REQUIRED_CONFIG.forEach((field) => {

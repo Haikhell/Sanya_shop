@@ -1,7 +1,7 @@
 const { DB } = require('../../const');
 
 module.exports = {
-  name: DB.COLLECTION.TASKS,
+  name: DB.COLLECTION.PRODUCTS,
   opts: {
     wtimeout: 5000,
     w: 'majority'
@@ -45,5 +45,5 @@ module.exports = {
       }
     }
   },
-  init: async (db, collection) => collection.createIndex({ title: first })
+  init: async (db, collection) => collection.createIndex({ title: 1 })
 };

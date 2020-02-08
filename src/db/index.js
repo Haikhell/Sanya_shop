@@ -2,6 +2,8 @@ const _ = require('lodash');
 const mongodb = require('mongodb');
 const collectionsInfoAll = require('./collections');
 
+const { each } = require('../helpers/async');
+
 const { DB } = require('../const');
 
 const connectionDefaultOpts = Object.freeze({
@@ -17,11 +19,11 @@ class DbManager {
     this.connections = new Map();
   }
   getClient(name) {
-    return this.collections.get(name);
+    return this.connections.get(name);
   }
-  async createConnections(url, con = connectionDefaultOpts, name = url) {
+  async createConnection(url, opts = connectionDefaultOpts, name = url) {
     try {
-      const client = new mongodb.MongoClient(url, con);
+      const client = new mongodb.MongoClient(url, opts);
 
       await client.connect();
 
@@ -45,22 +47,26 @@ class DbManager {
     return client[DB.DBS][dbName];
   }
   getDb(clientName, dbName) {
-    const client = this.connections.get(clientName, dbName);
+    const client = this.connections.get(clientName);
 
     return client[DB.DBS][dbName] || this.initDb(client, dbName);
   }
+
   initCollections(clientName, dbName, collectionsNameList = '*') {
     let collectionsInfoSelected;
+
     const { db, collections } = this.getDb(clientName, dbName);
+
     if (collectionsNameList === '*') {
       collectionsInfoSelected = collectionsInfoAll;
     } else {
       collectionsInfoSelected = _.pick(collectionsInfoAll, collectionsNameList);
     }
+
     const collectionsInfo = Object.values(collectionsInfoSelected);
 
     return each(collectionsInfo, async (collectionInfo) => {
-      const collection = await db.createConnections(collectionInfo.name, collectionInfo.con);
+      const collection = await db.createCollection(collectionInfo.name, collectionInfo.opts);
 
       await db.command({
         collMod: collectionInfo.name,
@@ -68,10 +74,10 @@ class DbManager {
       });
 
       if (typeof collectionInfo.init === 'function') {
-        await collectionsInfo.init(db, collection);
+        await collectionInfo.init(db, collection);
       }
 
-      collections[collectionsInfo.name] = collection;
+      collections[collectionInfo.name] = collection;
     });
   }
 }
