@@ -10,10 +10,13 @@ module.exports = {
     $jsonSchema: {
       additionalProperties: false,
       bsonType: 'object',
-      required: [ '_id', 'title', 'description', 'country', 'price', 'category', 'photo_path' ],
+      required: [ '_id', 'title', 'description', 'country', 'price', 'category', 'photoPath', 'inStock' ],
       properties: {
         _id: {
           bsonType: 'objectId'
+        },
+        inStock: {
+          bsonType: 'bool'
         },
         title: {
           bsonType: 'string'
@@ -30,12 +33,10 @@ module.exports = {
         category: {
           bsonType: 'array'
         },
-        photo_path: {
+        photoPath: {
           bsonType: 'array'
         },
-        dueDate: {
-          bsonType: 'date'
-        },
+
         createdAt: {
           bsonType: 'date'
         },

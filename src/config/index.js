@@ -6,6 +6,7 @@ const NODE_ENV = ENV.NODE_ENV;
 const REQUIRED_CONFIG = [ 'NODE_ENV', 'MONGO_DB_URL', 'MONGO_DB_NAME', 'CODER_SECRET_KEY' ];
 
 REQUIRED_CONFIG.forEach((field) => {
+  console.log(field);
   if (!ENV.hasOwnProperty(field)) {
     throw new Error('Missing required config!');
   }

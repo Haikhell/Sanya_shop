@@ -1,7 +1,7 @@
 const { DB } = require('../../const');
 
 module.exports = {
-  name: DB.COLLECTION.USERS,
+  name: DB.COLLECTION.BUCKET,
   opts: {
     wtimeout: 5000,
     w: 'majority'
@@ -10,27 +10,20 @@ module.exports = {
     $jsonSchema: {
       additionalProperties: false,
       bsonType: 'object',
-      required: [ '_id', 'email', 'password', 'first_name', 'last_name', 'phone' ],
+      required: [ '_id', 'userId', 'productList', 'state' ],
       properties: {
         _id: {
           bsonType: 'objectId'
         },
-        email: {
-          bsonType: 'string'
+        userId: {
+          bsonType: 'objectId'
         },
-        password: {
-          bsonType: 'string'
+        productList: {
+          bsonType: 'array'
         },
-        first_name: {
-          bsonType: 'string'
+        state: {
+          bsonType: 'number'
         },
-        last_name: {
-          bsonType: 'string'
-        },
-        phone: {
-          bsonType: 'string'
-        },
-
         createdAt: {
           bsonType: 'date'
         },
@@ -40,5 +33,5 @@ module.exports = {
       }
     }
   },
-  init: async (db, collection) => collection.createIndex({ email: 1 })
+  init: async (db, collection) => collection.createIndex({ productList: 1 })
 };

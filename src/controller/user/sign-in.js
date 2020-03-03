@@ -1,33 +1,36 @@
 const security = require('../../helpers/security');
+const db = require('../../db');
 
-module.exports = async ({ db, body, headers, now }) => {
+module.exports = async ({ body, headers, now }) => {
   const { email, password } = body;
-  const deviceId = [ 'device-id' ];
+  const deviceId = headers.deviceid;
+
   if (!deviceId) {
     throw 'not valid device id';
   }
 
   const userModel = await db.collections.users.findOne({ email });
-
   if (!userModel) {
     throw 'not found user';
   }
 
   const passworIsEqual = await security.compare(password, userModel.password);
-
   if (!passworIsEqual) {
-    throw 'not found user';
+    throw 'not valid password';
   }
 
   const userId = userModel._id;
 
   const sessionModel = await db.collections.session.findOne({ deviceId, userId });
 
-  const autorizationToken = security.generateSimpleToken();
-  const update = { autorizationToken, updatedAt: now };
+  const authorizationToken = security.generateSimpleToken();
+  const update = { authorizationToken, updatedAt: now };
   if (!sessionModel) {
-    update.createAt = now;
+    update.createdAt = now;
   }
+  update.deviceId = deviceId;
+  update.userId = userId;
+  console.log(update);
 
   await db.collections.session.updateOne(
     {
@@ -44,7 +47,7 @@ module.exports = async ({ db, body, headers, now }) => {
   return {
     status: 200,
     data: {
-      autorizationToken,
+      authorizationToken,
       userId: userId.toString()
     }
   };

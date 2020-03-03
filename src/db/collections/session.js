@@ -12,7 +12,9 @@ module.exports = {
       bsonType: 'object',
       required: [ '_id', 'userId', 'authorizationToken', 'deviceId', 'createdAt', 'updatedAt' ],
       properties: {
-        _id: { bsonType: 'objectId' },
+        _id: {
+          bsonType: 'objectId'
+        },
         userId: { bsonType: 'objectId' },
         authorizationToken: { bsonType: 'string' },
         deviceId: { bsonType: 'string' },

@@ -1,8 +1,8 @@
 const mongodb = require('mongodb');
-
+const db = require('../../db');
 const security = require('../../helpers/security');
 
-module.exports = async ({ db, body, headers, now }) => {
+module.exports = async ({ body, headers, now }) => {
   const { email, password, first_name, last_name, phone } = body;
   const deviceId = headers['device-id'];
 
@@ -21,19 +21,17 @@ module.exports = async ({ db, body, headers, now }) => {
     throw 'this phone already used';
   }
   const userId = new mongodb.ObjectId();
-  const autorizationToken = security.generateSimpleToken();
+  const authorizationToken = security.generateSimpleToken();
 
   const hashedPass = await security.hash(password);
-
-  await db.collections.session.inserOne({
+  await db.collections.session.insertOne({
     userId,
     deviceId,
-    autorizationToken,
+    authorizationToken,
     createdAt: now,
-    updated: now
+    updatedAt: now
   });
-
-  await db.collections.users.inserOne({
+  await db.collections.users.insertOne({
     email,
     createdAt: now,
     updatedAt: now,
@@ -41,13 +39,12 @@ module.exports = async ({ db, body, headers, now }) => {
     password: hashedPass,
     phone,
     first_name,
-    last_name,
-    basket: []
+    last_name
   });
   return {
     status: 201,
     data: {
-      autorizationToken,
+      authorizationToken,
       userId: userId.toString()
     }
   };

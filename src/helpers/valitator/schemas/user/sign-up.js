@@ -6,7 +6,6 @@ module.exports = Joi.object()
     password: Joi.string().required().min(8).max(16),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
-    phone: Joi.string().required(),
-    basket: Joi.array().required()
+    phone: Joi.string().required()
   })
   .strict();

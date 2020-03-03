@@ -1,6 +1,8 @@
 const validator = require('../helpers/valitator');
 
-module.exports = (schema) => (req, res, next) => {
+module.exports.schemas = validator.schemas;
+
+module.exports.middleware = (schema) => (req, res, next) => {
   try {
     const body = req.body;
     const { error } = validator.validate(body, schema);

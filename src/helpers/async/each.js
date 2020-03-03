@@ -1,1 +1,3 @@
-module.exports = (docs, asyncFunction) => Promise.all(docs.map(asyncFunction));
+module.exports = (docs, asyncFunction) => {
+  return Promise.all(docs.map(asyncFunction));
+};

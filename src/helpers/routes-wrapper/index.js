@@ -15,12 +15,10 @@ const wrapper = (fn) => async (req, res, next) => {
 
 module.exports = (controller) => {
   const routes = {};
-
   Object.keys(controller).forEach((key) => {
     if (typeof controller[key] === 'function') {
       routes[key] = wrapper(controller[key]);
     }
   });
-
   return routes;
 };

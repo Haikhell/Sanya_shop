@@ -1,8 +1,9 @@
 module.exports = Object.freeze({
-  DBS: Symbol('client_dbs'),
+  DB_NAME: 'shop',
   COLLECTION: {
     USERS: 'users',
     SESSION: 'session',
-    PRODUCTS: 'products'
+    PRODUCTS: 'products',
+    BUCKET: 'bucket'
   }
 });
